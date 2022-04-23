@@ -1,13 +1,25 @@
-
 const express = require('express')
 const mongodb = require('mongodb');
-var db = require('./database.js');
-
+const MongoClient = require('mongodb').MongoClient;
 const app = express()
-const port = 3000
+const port = 3050
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+
+  const url = "mongodb://localhost:27017/";
+  const database = 'db_mahasiswa';
+  const table = 'mahasiswa';
+
+  MongoClient.connect(url, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db(database);
+
+    dbo.collection(table).findOne({}, function (err, result) {
+      if (err) throw err;
+      res.send(result)
+      db.close();
+    });
+  });
 })
 
 
