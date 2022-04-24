@@ -52,6 +52,7 @@
 <script>
     var _TOKEN_ = 'kKKl3NKuXfb6kVkfh61fVafm5Ds1Y3jydxMZAOC';
 
+    function _isEmail(e) {var em = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; return (e === undefined) ? !1 : em.test(e) }
 
     var table_data = new Vue({
         el: '#add-data',
@@ -69,6 +70,16 @@
                     return;
                 }
                 if (this.email === '' || this.email == null) {
+                    this.$refs.email.focus();
+                    return;
+                }
+
+                if (_isEmail(this.email)==false){
+                    Swal.fire(
+                        'Uppzz!',
+                        'Email is not valid',
+                        'warning'
+                    );
                     this.$refs.email.focus();
                     return;
                 }
