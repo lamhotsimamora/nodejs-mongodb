@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Example MongoDB & Express</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+    <script src="https://kit.fontawesome.com/2d224c69d1.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+</head>
+
+<body>
+    <aside class="sidebar pos-absolute z-2" data-role="sidebar" data-toggle="#sidebar-toggle-2">
+        <div class="sidebar-header" data-image="public/sb-bg-1.jpg">
+            <div class="avatar">
+                <img data-role="gravatar" data-email="sergey@pimenov.com.ua">
+            </div>
+            <span class="title fg-white">Metro 4 Components Library</span>
+            <span class="subtitle fg-white"> 2018 © Sergey Pimenov</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a><span class="mif-home icon"></span>Home</a></li>
+            <li><a><span class="mif-books icon"></span>Guide</a></li>
+            <li><a><span class="mif-files-empty icon"></span>Examples</a></li>
+            <li class="divider"></li>
+            <li><a><span class="mif-images icon"></span>Icons</a></li>
+        </ul>
+    </aside>
+    <div class="h-100 p-ab">
+        <button class="button square pos-absolute pos-top-right" id="sidebar-toggle-2">
+            <span class="mif-menu"></span>
+        </button>
+    </div>
+
+    <div id="table-data" class="container-fluid">
+        <!-- content here -->
+
+        <button class="button primary">Add</button>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>@</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="d in data_user">
+                    <td>{{ d.username }}</td>
+                    <td>{{ d.email }}</td>
+                    <td>
+                        <button class="button alert">x</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</body>
+
+<script>
+    var _TOKEN_ = 'kKKl3NKuXfb6kVkfh61fVafm5Ds1Y3jydxMZAOC';
+
+
+    var table_data = new Vue({
+        el: '#table-data',
+        data: {
+            data_user: null
+        },
+        methods: {
+            loadData: function () {
+                
+                axios({
+                    method: 'post',
+                    url: '/api/get-all-data',
+                    data: {
+                        _token : _TOKEN_
+                    }
+                }) .then(function (response) {
+                    var obj = (response.data);
+                    obj = JSON.stringify(obj);
+
+                    this.data_user = JSON.parse(obj);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        mounted() {
+           this.loadData();
+        },
+    })
+</script>
+
+</html>
