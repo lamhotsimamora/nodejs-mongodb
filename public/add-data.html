@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Example MongoDB & Express</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
+    <script src="https://kit.fontawesome.com/2d224c69d1.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <aside class="sidebar pos-absolute z-2" data-role="sidebar" data-toggle="#sidebar-toggle-2">
+        <div class="sidebar-header" data-image="public/sb-bg-1.jpg">
+            <div class="avatar">
+                <img src="public/me.jpg" data-email="lamhotsimamora36@gmail.com">
+            </div>
+            <span class="title fg-white">Example MongoDB & Express</span>
+            <span class="subtitle fg-white"> 2022©Lamhot Simamora</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="."><span class="mif-home icon"></span>Home</a></li>
+            <li><a href="./add-data"><span class="mif-add icon"></span>Add Data</a></li>
+        </ul>
+    </aside>
+    <div class="h-100 p-ab">
+        <button class="button square pos-absolute pos-top-left" id="sidebar-toggle-2">
+            <span class="mif-menu"></span>
+        </button>
+    </div>
+
+    <div id="add-data" class="container-fluid">
+        <hr>
+        <form>
+            <input type="text" v-model="username" ref="username" placeholder=" Username" class="metro-input">
+        </form> <br>  
+        <form>
+            <input type="text" v-model="email" ref="email" placeholder=" Email" class="metro-input">
+        </form>
+        <hr>
+        <button @click="addData" class="button primary">+ Add</button>
+        <button @click="goToHome" class="button">Back To Home</button>
+    </div>
+
+</body>
+
+<script>
+    var _TOKEN_ = 'kKKl3NKuXfb6kVkfh61fVafm5Ds1Y3jydxMZAOC';
+
+
+    var table_data = new Vue({
+        el: '#add-data',
+        data: {
+            username: null,
+            email :null
+        },
+        methods: {
+            goToHome: function () {
+                window.location.href = ".";
+            },
+            addData : function () {
+                if (this.username === '' || this.username == null) {
+                    this.$refs.username.focus();
+                    return;
+                }
+                if (this.email === '' || this.email == null) {
+                    this.$refs.email.focus();
+                    return;
+                }
+
+                var data = this;
+                axios({
+                    method: 'post',
+                    url: '/api/add-data',
+                    data: {
+                        _token : _TOKEN_,
+                        _username : this.username,
+                        _email: this.email
+                    }
+                }) .then(function (response) {
+                    var result = (response.data.result);
+
+                    if (result){
+                        Swal.fire(
+                            'Added!',
+                            'Your data has been added.',
+                            'success'
+                        )
+                    }
+                    data.username =null;
+                    data.email =null;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        mounted() {
+
+        },
+    })
+</script>
+
+</html>

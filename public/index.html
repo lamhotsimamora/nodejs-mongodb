@@ -11,27 +11,26 @@
     <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
     <script src="https://kit.fontawesome.com/2d224c69d1.js" crossorigin="anonymous"></script>
     <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
     <aside class="sidebar pos-absolute z-2" data-role="sidebar" data-toggle="#sidebar-toggle-2">
         <div class="sidebar-header" data-image="public/sb-bg-1.jpg">
             <div class="avatar">
-                <img data-role="gravatar" data-email="sergey@pimenov.com.ua">
+                <img src="public/me.jpg" data-email="lamhotsimamora36@gmail.com">
             </div>
-            <span class="title fg-white">Metro 4 Components Library</span>
-            <span class="subtitle fg-white"> 2018 © Sergey Pimenov</span>
+            <span class="title fg-white">Example MongoDB & Express</span>
+            <span class="subtitle fg-white"> 2022©Lamhot Simamora</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a><span class="mif-home icon"></span>Home</a></li>
-            <li><a><span class="mif-books icon"></span>Guide</a></li>
-            <li><a><span class="mif-files-empty icon"></span>Examples</a></li>
-            <li class="divider"></li>
-            <li><a><span class="mif-images icon"></span>Icons</a></li>
+            <li><a href="."><span class="mif-home icon"></span>Home</a></li>
+            <li><a href="./add-data"><span class="mif-add icon"></span>Add Data</a></li>
         </ul>
     </aside>
+
     <div class="h-100 p-ab">
-        <button class="button square pos-absolute pos-top-right" id="sidebar-toggle-2">
+        <button class="button square pos-absolute pos-top-left" id="sidebar-toggle-2">
             <span class="mif-menu"></span>
         </button>
     </div>
@@ -39,12 +38,12 @@
     <div id="table-data" class="container-fluid">
         <!-- content here -->
 
-        <button class="button primary">Add</button>
+        <button @click="goToAdd" class="button primary">+ Add</button>
         <hr>
         <table class="table">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <!-- <th>#</th> -->
                     <th>Username</th>
                     <th>Email</th>
                     <th>@</th>
@@ -52,16 +51,17 @@
             </thead>
             <tbody>
                 <tr v-for="d in data_user">
+                    <!-- <td>{{ d._id }}</td> -->
                     <td>{{ d.username }}</td>
                     <td>{{ d.email }}</td>
                     <td>
-                        <button class="button alert">x</button>
+                        <button @click="deleteData(d.username)" class="button alert">x</button>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    
+
 </body>
 
 <script>
@@ -74,27 +74,69 @@
             data_user: null
         },
         methods: {
+            goToAdd: function () {
+                window.location.href = "./add-data";
+            },
+            deleteData: function (username) {
+                var data = this;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios({
+                            method: 'post',
+                            url: '/api/delete-data',
+                            data: {
+                                _token: _TOKEN_,
+                                _username: username
+                            }
+                        }).then(function (response) {
+                            var result = (response.data.result);
+                            if (result) {
+                            Swal.fire(
+                                    'Deleted!',
+                                    'Your data has been deleted.',
+                                    'success'
+                                )
+                            }
+                            data.loadData()
+                        })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+
+                    }
+                })
+
+
+            },
             loadData: function () {
-                
+                this.data_user = null;
+                var data = this;
                 axios({
                     method: 'post',
                     url: '/api/get-all-data',
                     data: {
-                        _token : _TOKEN_
+                        _token: _TOKEN_
                     }
-                }) .then(function (response) {
+                }).then(function (response) {
                     var obj = (response.data);
-                    obj = JSON.stringify(obj);
 
-                    this.data_user = JSON.parse(obj);
+                    data.data_user = obj;
                 })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             }
         },
         mounted() {
-           this.loadData();
+            this.loadData();
         },
     })
 </script>
