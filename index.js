@@ -54,7 +54,7 @@ app.post('/api/get-all-data', (req, res) => {
 
 app.post('/api/update-data', (req, res) => {
   const token_user = req.body._token;
-  const $username_old = req.body._username_old;
+  const $username_ori = req.body._username_ori;
   const $username = req.body._username;
   const $email = req.body._email;
 
@@ -62,18 +62,19 @@ app.post('/api/update-data', (req, res) => {
     MongoClient.connect(conn_string, function (err, db) {
       if (err) throw err;
       var dbo = db.db("db_example");
-      var myquery = {
-        username : $username_old
+      var myQuery = {
+        username : $username_ori
       };
-      var newvalues = {
+      var newValues = {
         $set: {
           username: $username,
           email: $email
         }
       };
-      dbo.collection("user").updateOne(myquery, newvalues, function (err, res) {
+      var $res = res;
+      dbo.collection("user").updateOne(myQuery, newValues, function (err, res) {
         if (err) throw err;
-        $res.json({
+         $res.json({
           message: 'Update Success',
           result: true
         })

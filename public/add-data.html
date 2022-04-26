@@ -25,7 +25,7 @@
         </div>
         <ul class="sidebar-menu">
             <li><a href="."><span class="mif-home icon"></span>Home</a></li>
-            <li><a href="./add-data"><span class="mif-add icon"></span>Add Data</a></li>
+            <li><a href="./add-data"><span class="mif-add icon"></span>Add </a></li>
         </ul>
     </aside>
     <div class="h-100 p-ab">
@@ -43,8 +43,10 @@
             <input type="text" v-model="email" ref="email" placeholder=" Email" class="metro-input">
         </form>
         <hr>
-        <button @click="addData" class="button primary">+ Add</button>
-        <button @click="goToHome" class="button">Back To Home</button>
+        <button @click="addData" class="button success">Save</button>
+        <button @click="goToHome" data-role="hint"
+        data-hint-position="right"
+        data-hint-text="Back To Home" class="button">Home</button>
     </div>
 
 </body>

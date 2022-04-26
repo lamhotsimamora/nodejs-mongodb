@@ -25,7 +25,7 @@
         </div>
         <ul class="sidebar-menu">
             <li><a href="."><span class="mif-home icon"></span>Home</a></li>
-            <li><a href="./add-data"><span class="mif-add icon"></span>Add Data</a></li>
+            <li><a href="./add-data" ><span class="mif-add icon"></span>Add </a></li>
         </ul>
     </aside>
 
@@ -37,10 +37,12 @@
 
     <div id="table-data" class="container-fluid">
         <!-- content here -->
-
-        <button @click="goToAdd" class="button primary">+ Add</button>
+       
+        <button @click="goToAdd" data-role="hint"
+        data-hint-position="right"
+        data-hint-text="Add New Data" class="button primary">+ Add</button>
         <hr>
-        <table class="table">
+        <table class="table striped cell-border">
             <thead>
                 <tr>
                     <!-- <th>#</th> -->
@@ -55,18 +57,102 @@
                     <td>{{ d.username }}</td>
                     <td>{{ d.email }}</td>
                     <td>
+                        <button @click="sendData(d.username,d.email)" class="button warning"
+                        onclick="Metro.dialog.open('#editForm')">Edit</button>
                         <button @click="deleteData(d.username)" class="button alert">x</button>
+                      
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
+    <!-- dialog -->
+    <div class="dialog" data-role="dialog" id="editForm">
+        <div class="dialog-title">
+            Edit Data
+        </div>
+        <div class="dialog-content">
+            <form>
+                <input type="text" v-model="username" ref="username" placeholder=" Username" class="metro-input">
+            </form> <br>  
+            <form>
+                <input type="text" v-model="email" ref="email" placeholder=" Email" class="metro-input">
+            </form>
+        </div>
+        <div class="dialog-actions">
+            <button @click="updateData" class="button primary">Save</button>
+            <button class="button js-dialog-close">Close</button>
+        </div>
+    </div>
+    
+
 </body>
 
 <script>
     var _TOKEN_ = 'kKKl3NKuXfb6kVkfh61fVafm5Ds1Y3jydxMZAOC';
 
+    function _isEmail(e) {var em = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; return (e === undefined) ? !1 : em.test(e) }
+
+
+    var editForm = new Vue({
+        el : '#editForm',
+        data : {
+            username_ori:null,
+            username : null,
+            email : null
+        },
+        methods: {
+            updateData : function(){
+                if (this.username === '' || this.username == null) {
+                    this.$refs.username.focus();
+                    return;
+                }
+                if (this.email === '' || this.email == null) {
+                    this.$refs.email.focus();
+                    return;
+                }
+
+                if (_isEmail(this.email)==false){
+                    Swal.fire(
+                        'Uppzz!',
+                        'Email is not valid',
+                        'warning'
+                    );
+                    this.$refs.email.focus();
+                    return;
+                }
+
+                var data = this;
+                axios({
+                    method: 'post',
+                    url: '/api/update-data',
+                    data: {
+                        _token : _TOKEN_,
+                        _username_ori : this.username_ori,
+                        _username : this.username,
+                        _email: this.email
+                    }
+                }) .then(function (response) {
+                    var result = (response.data.result);
+
+                    if (result){
+                        Swal.fire(
+                            'Added!',
+                            'Your data has been updated.',
+                            'success'
+                        )
+                    }
+                    table_data.loadData();
+                    data.username =null;
+                    data.email =null;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+    })
 
     var table_data = new Vue({
         el: '#table-data',
@@ -74,6 +160,12 @@
             data_user: null
         },
         methods: {
+            sendData: function(username,email){
+                editForm.username = username;
+                editForm.username_ori = username;
+                editForm.email = email;
+
+            },
             goToAdd: function () {
                 window.location.href = "./add-data";
             },
@@ -138,7 +230,11 @@
         mounted() {
             this.loadData();
         },
-    })
+    });
+
+    var toast = Metro.toast.create;
+    toast("Welcome to MongoDB & Express JS");
+   
 </script>
 
 </html>
