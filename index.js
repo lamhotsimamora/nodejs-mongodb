@@ -31,6 +31,29 @@ app.get('/home', (req, res) => {
 
 })
 
+app.post('/api/search-data', (req, res) => {
+  const token_user = req.body._token;
+  const $search = req.body._search;
+
+  if (token_server == token_user) {
+    MongoClient.connect(conn_string, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("db_example");
+      var query = { username: $search };
+      dbo.collection("user").find(query).toArray(function(err, result) {
+        if (err) throw err;
+        res.json(result)
+        db.close();
+      });
+    }); 
+
+  } else {
+    res.json({
+      message: 'Token Invalid'
+    })
+  }
+})
+
 app.post('/api/get-all-data', (req, res) => {
   const token_user = req.body._token;
 

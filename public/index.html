@@ -41,6 +41,18 @@
         <button @click="goToAdd" data-role="hint"
         data-hint-position="right"
         data-hint-text="Add New Data" class="button primary">+ Add</button>
+        <button @click="goToRefresh" data-role="hint"
+        data-hint-position="right"
+        data-hint-text="" class="button success">Refresh</button>
+        <hr>
+        <div class="form-group">
+            <label></label>
+            <input v-model="search" ref="search" type="text" placeholder="Search"/>
+            <small class="text-muted"></small>
+            <button @click="searchData" data-role="hint"
+            data-hint-position="right"
+            data-hint-text="Search Data" class="button secondary">Search</button>
+        </div>
         <hr>
         <table class="table striped cell-border">
             <thead>
@@ -103,6 +115,7 @@
             email : null
         },
         methods: {
+            
             updateData : function(){
                 if (this.username === '' || this.username == null) {
                     this.$refs.username.focus();
@@ -157,9 +170,35 @@
     var table_data = new Vue({
         el: '#table-data',
         data: {
-            data_user: null
+            data_user: null,
+            search : null
         },
         methods: {
+            goToRefresh:function(){
+                this.loadData()
+            },
+            searchData: function(){
+                if (this.search === '' || this.search == null) {
+                    this.$refs.search.focus();
+                    return;
+                }
+                var data = this;
+                axios({
+                    method: 'post',
+                    url: '/api/search-data',
+                    data: {
+                        _token: _TOKEN_,
+                        _search: this.search
+                    }
+                }).then(function (response) {
+                    var obj = (response.data);
+                    console.log(obj);
+                    data.data_user = obj;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
             sendData: function(username,email){
                 editForm.username = username;
                 editForm.username_ori = username;
@@ -199,9 +238,9 @@
                             }
                             data.loadData()
                         })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                        .catch(function (error) {
+                            console.log(error);
+                        });
 
                     }
                 })
@@ -222,9 +261,9 @@
 
                     data.data_user = obj;
                 })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                .catch(function (error) {
+                    console.log(error);
+                });
             }
         },
         mounted() {
