@@ -36,7 +36,7 @@ app.post('/api/search-data', (req, res) => {
   const $search = req.body._search;
 
   if (token_server == token_user) {
-    MongoClient.connect(conn_string, function(err, db) {
+    MongoClient.connect(conn_stringooooo, function(err, db) {
       if (err) throw err;
       var dbo = db.db("db_example");
       var query = { username: $search };
