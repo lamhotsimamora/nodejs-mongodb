@@ -103,7 +103,7 @@
 
 <script>
     var _TOKEN_ = 'kKKl3NKuXfb6kVkfh61fVafm5Ds1Y3jydxMZAOC';
-
+    const url = "http://localhost:3333"
     function _isEmail(e) {var em = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; return (e === undefined) ? !1 : em.test(e) }
 
 
@@ -139,7 +139,7 @@
                 var data = this;
                 axios({
                     method: 'post',
-                    url: '/api/update-data',
+                    url: url+'/api/update-data',
                     data: {
                         _token : _TOKEN_,
                         _username_ori : this.username_ori,
@@ -151,7 +151,7 @@
 
                     if (result){
                         Swal.fire(
-                            'Added!',
+                            'Updated!',
                             'Your data has been updated.',
                             'success'
                         )
@@ -171,7 +171,7 @@
         el: '#table-data',
         data: {
             data_user: null,
-            search : nulloooooo
+            search : null
         },
         methods: {
             goToRefresh:function(){
@@ -185,7 +185,7 @@
                 var data = this;
                 axios({
                     method: 'post',
-                    url: '/api/search-data',
+                    url: url+'/api/search-data',
                     data: {
                         _token: _TOKEN_,
                         _search: this.search
@@ -206,7 +206,7 @@
 
             },
             goToAdd: function () {
-                window.location.href = "./add-data";
+                window.location.href = "./add-data.html";
             },
             deleteData: function (username) {
                 var data = this;
@@ -222,7 +222,7 @@
                     if (result.isConfirmed) {
                         axios({
                             method: 'post',
-                            url: '/api/delete-data',
+                            url: url+'/api/delete-data',
                             data: {
                                 _token: _TOKEN_,
                                 _username: username
@@ -252,7 +252,7 @@
                 var data = this;
                 axios({
                     method: 'post',
-                    url: '/api/get-all-data',
+                    url: url+'/api/get-all-data',
                     data: {
                         _token: _TOKEN_
                     }

@@ -2,9 +2,19 @@ const express = require('express')
 const mongodb = require('mongodb');
 const MongoClient = require('mongodb').MongoClient;
 const app = express()
-const port = 3000
+const port = 3333
 const path = require('path')
 const bodyParser = require('body-parser');
+const cors = require('cors');
+
+app.use(cors());
+
+// Jika ingin mengizinkan domain tertentu:
+app.use(cors({
+  origin: '*', // Ganti dengan domain frontend kamu
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(bodyParser.json());
 app.use(require('body-parser').urlencoded({
